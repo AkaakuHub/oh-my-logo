@@ -1,6 +1,7 @@
 import figlet from 'figlet';
 import gradient from 'gradient-string';
 import { FontError } from './utils/errors.js';
+import { renderJapaneseText, containsJapanese } from './japanese-renderer.js';
 
 export function renderLogo(
   text: string,
@@ -8,6 +9,11 @@ export function renderLogo(
   font: string = 'Standard',
   direction: string = 'vertical'
 ): string {
+  // Check if text contains Japanese characters
+  if (containsJapanese(text)) {
+    return renderJapaneseText(text, palette, direction);
+  }
+  
   try {
     const asciiArt = figlet.textSync(text, {
       font: font as figlet.Fonts,
@@ -44,7 +50,7 @@ export function renderLogo(
             return line;
           }
           // Create a gradient that shifts based on line position
-          const shiftedPalette = palette.map((color, colorIndex) => {
+          const shiftedPalette = palette.map((_, colorIndex) => {
             const shift = (index / lineCount) * palette.length;
             return palette[Math.floor(colorIndex + shift) % palette.length];
           });

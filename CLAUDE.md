@@ -26,25 +26,29 @@ node dist/index.js "LOGO" fire --filled
 node dist/index.js "TEXT" ocean -d horizontal
 node dist/index.js "TEXT" ocean -d diagonal
 
+# Test Japanese text support
+node dist/index.js "こんにちは" sunset
+node dist/index.js "世界" fire --filled
+
 # List all palettes
 node dist/index.js "" --list-palettes
 ```
 
 ## Architecture Overview
 
-This is a CLI tool that generates ASCII art logos with gradient colors. There are **two distinct rendering systems**:
+This is a CLI tool that generates ASCII art logos with gradient colors. There are **two distinct rendering systems** with **Japanese language support**:
 
 ### 1. Traditional ASCII Art (Default)
 - **Entry**: `src/renderer.ts` → `renderLogo()`
-- **Tech**: `figlet` + `gradient-string`
-- **Output**: Outlined ASCII characters with gradient colors
-- **Supports**: 3 gradient directions (vertical, horizontal, diagonal)
+- **Tech**: `figlet` + `gradient-string` for ASCII, custom Japanese renderer for CJK
+- **Output**: Outlined ASCII characters with gradient colors, or block-style Japanese characters
+- **Supports**: 3 gradient directions (vertical, horizontal, diagonal), Japanese/CJK text detection
 
 ### 2. Filled Block Characters (--filled flag)
 - **Entry**: `src/InkRenderer.tsx` → `renderInkLogo()`
-- **Tech**: React + `ink` + `ink-big-text` + `ink-gradient`
-- **Output**: Solid block characters with gradient fills
-- **Supports**: Multi-line text, custom color palettes
+- **Tech**: React + `ink` + `ink-big-text` + `ink-gradient`, custom Japanese block renderer
+- **Output**: Solid block characters with gradient fills, Japanese-specific block art
+- **Supports**: Multi-line text, custom color palettes, Japanese text rendering
 
 ### Core Components
 
@@ -58,7 +62,15 @@ This is a CLI tool that generates ASCII art logos with gradient colors. There ar
 
 **`src/utils/errors.ts`**: Custom error classes (`PaletteError`, `InputError`, `FontError`) for better error handling.
 
+**`src/japanese-renderer.ts`**: Japanese/CJK text rendering utilities. Detects Japanese characters and creates block-style ASCII art for characters that figlet cannot handle.
+
 ## Key Implementation Details
+
+### Japanese Language Support
+- **Detection**: Uses Unicode ranges to detect Japanese characters (Hiragana, Katakana, Kanji)
+- **Rendering**: Custom block-style ASCII art for Japanese characters that figlet cannot handle
+- **Width-aware**: Properly handles full-width characters (CJK characters are 2 columns wide)
+- **Fallback**: Automatically switches to Japanese renderer when Japanese characters are detected
 
 ### Gradient Rendering Strategies
 - **Vertical**: Uses `gradient().multiline()` for smooth top-to-bottom gradients

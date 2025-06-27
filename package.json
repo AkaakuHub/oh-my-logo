@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && cp -r src/fonts dist/",
     "start": "ts-node --esm src/index.ts",
     "dev": "tsx src/index.ts",
     "test": "vitest",
@@ -46,12 +46,15 @@
   ],
   "dependencies": {
     "commander": "^11.1.0",
+    "encoding-japanese": "^2.2.0",
     "figlet": "^1.7.0",
     "gradient-string": "^2.0.2",
     "ink": "^5.0.1",
     "ink-big-text": "^2.0.0",
     "ink-gradient": "^3.0.0",
-    "react": "^18.3.1"
+    "jconv": "^0.1.5",
+    "react": "^18.3.1",
+    "string-width": "^7.2.0"
   },
   "devDependencies": {
     "@types/figlet": "^1.5.8",
